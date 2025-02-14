@@ -443,11 +443,6 @@ int main(int argc, char *argv[]) {
         accel_base_y *= accel_base_scale;
         accel_base_z *= accel_base_scale;
 
-        debug_printf("Screen: x:%f y:%f z:%f\n", accel_screen_x, accel_screen_y,
-                     accel_screen_z);
-        debug_printf("Base  : x:%f y:%f z:%f\n", accel_base_x, accel_base_y,
-                     accel_base_z);
-
         // Get the angle from x, z
         double angle_screen =
             -atan2(accel_screen_x, accel_screen_z) * 180.0 / M_PI;
@@ -459,15 +454,34 @@ int main(int argc, char *argv[]) {
         if (angle < 0 && angle_base < 0 && angle_screen > 0) {
             angle += 360.0;
         }
+    if (accel_screen_x > 3.0 || accel_screen_x < -3.0 || accel_screen_z > 3.0 || accel_screen_z < -3.0) {
+		if (360 - angle < 60 && angle > 0 && !is_enabled_tabletmode) {
+			printf("=============\nENABLED\n");
+			printf("Screen: x:%f y:%f z:%f\n", accel_screen_x, accel_screen_y, accel_screen_z);
+			printf("Base  : x:%f y:%f z:%f\n", accel_base_x, accel_base_y, accel_base_z);
+			printf("Main angle: %f\nAngle base: %f\nAngle screen:%f\n", angle, angle_base, angle_screen);
+        } else if (angle < 26 && angle > -60 && !is_enabled_tabletmode) {
+			printf("=============\nENABLED\n");
+			printf("Screen: x:%f y:%f z:%f\n", accel_screen_x, accel_screen_y, accel_screen_z);
+			printf("Base  : x:%f y:%f z:%f\n", accel_base_x, accel_base_y, accel_base_z);
+			printf("Main angle: %f\nAngle base: %f\nAngle screen:%f\n", angle, angle_base, angle_screen);
+        } else if (angle > 26 && angle < 180 && is_enabled_tabletmode) {
+			printf("=============\nDISABLED\n");
+			printf("Screen: x:%f y:%f z:%f\n", accel_screen_x, accel_screen_y, accel_screen_z);
+			printf("Base  : x:%f y:%f z:%f\n", accel_base_x, accel_base_y, accel_base_z);
+			printf("Main angle: %f\nAngle base: %f\nAngle screen:%f\n", angle, angle_base, angle_screen);
+        }
+	}
+		
 
         if (accel_screen_x > 3.0 || accel_screen_x < -3.0 ||
             accel_screen_z > 3.0 || accel_screen_z < -3.0) {
 
             if (360 - angle < 60 && angle > 0 && !is_enabled_tabletmode) {
                 set_tabletmode(1);
-            } else if (angle < 10 && angle > -60 && !is_enabled_tabletmode) {
+            } else if (angle < 26 && angle > -60 && !is_enabled_tabletmode) {
                 set_tabletmode(1);
-            } else if (angle > 10 && angle < 180 && is_enabled_tabletmode) {
+            } else if (angle > 26 && angle < 180 && is_enabled_tabletmode) {
                 set_tabletmode(0);
             }
         }
